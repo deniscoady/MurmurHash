@@ -27,9 +27,6 @@ SOFTWARE.
 
 #include <cstdint>
 
-
-
-
 /*
 
 This implementation follows the following algorithm originally found at:
@@ -89,7 +86,6 @@ Murmur3_32(key, len, seed)
 
 */
 
-
 /* Define Magic Constants */
 #define C1 0xcc9e2d51
 #define C2 0x1b873593
@@ -111,7 +107,6 @@ template<std::uint32_t Seed, char...Chars>
 struct MurmurHash32 {
     enum { value = MurmurHash32Impl<Seed,0, Chars...>::value };
 };
-
 
 // Covers final hash calculations, no more characters
 template <std::uint32_t Hash, std::uint32_t Length>
@@ -137,18 +132,15 @@ template <std::uint32_t Hash, std::uint32_t Length, char A>
 struct MurmurHash32Impl<Hash,Length,A> {
     // remainingBytes ← remainingBytes × c1
     enum { K0 = 0x00000000 ^ A };
-
+    // remainingBytes ← remainingBytes × c1
     enum { K1 = K0 * C1 };
-
     // remainingBytes ← (remainingBytes ROL r1)
     enum { K2 = (K1 << R1) | (K1 >> (32-R1)) };
-
     // remainingBytes ← remainingBytes × c2
     enum { K3 = K2 * C2 };
-
     // hash ← hash XOR remainingBytes
     enum { Hash1 = Hash ^ K3 };
-
+    // No more string, just final hash manipulations
     enum { value = MurmurHash32Impl<Hash1, Length+1>::value };
 };
 
@@ -157,19 +149,15 @@ template <std::uint32_t Hash, std::uint32_t Length, char A, char B>
 struct MurmurHash32Impl<Hash,Length,A,B> {
     enum { K0 = 0x00000000  ^ (B << 8) };
     enum { K1 = K0 ^ A };
-
     // remainingBytes ← remainingBytes × c1
     enum { K2 = K1 * C1 };
-
     // remainingBytes ← (remainingBytes ROL r1)
     enum { K3 = (K2 << R1) | (K2 >> (32-R1)) };
-
     // remainingBytes ← remainingBytes × c2
     enum { K4 = K3 * C2 };
-
     // hash ← hash XOR remainingBytes
     enum { Hash1 = Hash ^ K4 };
-
+    // No more string, just final hash manipulations
     enum { value = MurmurHash32Impl<Hash1, Length+2>::value };
 };
 
@@ -179,19 +167,15 @@ struct MurmurHash32Impl<Hash,Length,A,B,C> {
     enum { K0 = 0  ^ (C << 16) };
     enum { K1 = K0 ^ (B << 8) };
     enum { K2 = K1 ^ A };
-
     // remainingBytes ← remainingBytes × c1
     enum { K3 = K2 * C1 };
-
     // remainingBytes ← (remainingBytes ROL r1)
     enum { K4 = (K3 << R1) | (K3 >> (32-R1)) };
-
     // remainingBytes ← remainingBytes × c2
     enum { K5 = K4 * C2 };
-
     // hash ← hash XOR remainingBytes
     enum { Hash1 = Hash ^ K5 };
-
+    // No more string, just final hash manipulations
     enum { value = MurmurHash32Impl<Hash1, Length+3>::value };
 };
 
@@ -200,24 +184,18 @@ template <std::uint32_t Hash, std::uint32_t Length, char A, char B, char C, char
 struct MurmurHash32Impl<Hash,Length,A,B,C,D,Tail...> {
     // k ← fourByteChunk
     enum { K0 = (D << 24) | (C << 16) | (B << 8) | A };
-
     // k ← k × c1
     enum { K1 = K0 * C1 };
-
     // k ← (k ROL r1)
     enum { K2 = (K1 << R1) | (K1 >> (32-R1)) };
-
     // k ← k × c2
     enum { K3 = K2 * C2 };
-
     // hash ← hash XOR k
     enum { Hash1 = Hash ^ K3 };
-
     // hash ← (hash ROL r2)
     enum { Hash2 = (Hash1 << R2) | (Hash1 >> (32-R2)) };
-
     // hash ← hash × m + n
     enum { Hash3 = Hash2 * M + N };
-
+    // Calculate rest of string and final hash manipulations
     enum { value = MurmurHash32Impl<Hash3, Length+4, Tail...>::value };
 };
