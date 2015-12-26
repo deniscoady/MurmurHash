@@ -1,4 +1,5 @@
 // MurmurHash Template Metaprogramming Implementation 
+// https://github.com/dcoded/MurmurHash
 
 /*
 The MIT License (MIT)
