@@ -1,6 +1,6 @@
 # Murmur Hash TMP Implementation
 
-I created this to use for compile-time hashing of strings.
+I created this to use for compile-time hashing of strings. The implementation follows the algorithm originally found at https://en.wikipedia.org/wiki/MurmurHash
 
 
 ## Usage
